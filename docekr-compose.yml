@@ -1,0 +1,16 @@
+version: '3'
+services:
+  db-situation:
+    container_name: db-situation
+    image: postgres:15.2
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ms_situation
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: test123
+    ports:
+      - 5431:5431
+    expose:
+      - 5431
+    command:
+      - -p 5431
