@@ -10,10 +10,16 @@
 	</parent>
 	<groupId>com.yugimicroservice</groupId>
 	<artifactId>yugi-microservice</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>1.0.0-SNAPSHOT</version>
+	<packaging>pom</packaging>
 	<name>yugi-microservice</name>
 	<description>App to help new players of tcg </description>
 	<url/>
+	<modules>
+		<module>cartas-microservice</module>
+		<module>situation-microservice</module>
+		<module>strategy-microservice</module>
+	</modules>
 	<licenses>
 		<license/>
 	</licenses>
