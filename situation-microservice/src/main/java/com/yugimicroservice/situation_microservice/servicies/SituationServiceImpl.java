@@ -3,15 +3,17 @@ package com.yugimicroservice.situation_microservice.servicies;
 import com.yugimicroservice.situation_microservice.entities.CounterCard;
 import com.yugimicroservice.situation_microservice.entities.Situation;
 import com.yugimicroservice.situation_microservice.entities.TargetCard;
-import com.yugimicroservice.situation_microservice.entities.dto.CartaRequest;
-import com.yugimicroservice.situation_microservice.entities.dto.SituationRequest;
+import com.yugimicroservice.situation_microservice.entities.dto.*;
+import com.yugimicroservice.situation_microservice.repositories.CounterRepository;
 import com.yugimicroservice.situation_microservice.repositories.SituationRepository;
+import com.yugimicroservice.situation_microservice.repositories.TargetRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -20,9 +22,11 @@ import java.util.Optional;
 public class SituationServiceImpl implements SituationService {
 
     private final SituationRepository situationRepository;
+    private final TargetRepository targetRepository;
+    private final CounterRepository counterRepository;
     private final RestTemplate restTemplate;
 
-    @Value("@{spring.uri.value}")
+    @Value("${spring.data.rest.base-path}")
     private String basePath;
 
     @Override
@@ -42,11 +46,12 @@ public class SituationServiceImpl implements SituationService {
 
     @Override
     public String createSituation(SituationRequest situationRequest) {
-        Boolean response = restTemplate.getForObject(
-                basePath+"archetype/findIfExistByName/"+situationRequest.getName()
-                , Boolean.class);
+        ArchetypeBoolean response = restTemplate.getForObject(
+                basePath+"archetype/findIfExist/"+situationRequest.getArchetype()
+                , ArchetypeBoolean.class);
 
-        if (Boolean.FALSE.equals(response)) {
+        Boolean data = response.getFound();
+        if (!data) {
             return "Situation could not be created, Archetype not found";
         }
 
@@ -73,7 +78,7 @@ public class SituationServiceImpl implements SituationService {
         }
         TargetCard targetCard = TargetCard.builder()
                 .cardName(target.getCardName()).cardCode(target.getCardCode()).build();
-        //targetRepository.save(targetCard)
+        targetRepository.save(targetCard);
         cardList.add(targetCard);
         situation.setTargetCard(cardList);
         save(situation);
@@ -90,11 +95,19 @@ public class SituationServiceImpl implements SituationService {
         if(!situation.getCounterCard().isEmpty()){
             cardList = situation.getCounterCard();
         }
-        CounterCard targetCard = CounterCard.builder()
+        CounterCard counterCard = CounterCard.builder()
                 .cardName(counter.getCardName()).cardCode(counter.getCardCode()).build();
-        //targetRepository.save(targetCard)
-        cardList.add(targetCard);
+        counterRepository.save(counterCard);
+        cardList.add(counterCard);
         situation.setCounterCard(cardList);
         save(situation);
+    }
+
+    @Override
+    public ArchetypeFound getArchetype(String name) {
+        System.out.println(basePath);
+        return restTemplate.getForObject(
+                basePath+"archetype/"+name
+                , ArchetypeFound.class);
     }
 }

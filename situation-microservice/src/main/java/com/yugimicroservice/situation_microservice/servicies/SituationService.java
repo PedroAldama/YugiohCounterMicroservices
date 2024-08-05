@@ -1,6 +1,7 @@
 package com.yugimicroservice.situation_microservice.servicies;
 
 import com.yugimicroservice.situation_microservice.entities.Situation;
+import com.yugimicroservice.situation_microservice.entities.dto.ArchetypeFound;
 import com.yugimicroservice.situation_microservice.entities.dto.CartaRequest;
 import com.yugimicroservice.situation_microservice.entities.dto.SituationRequest;
 
@@ -13,4 +14,5 @@ public interface SituationService {
     String createSituation(SituationRequest situationRequest);
     void addTargetCard(String name, CartaRequest target);
     void addCounterCard(String name, CartaRequest counter);
+    ArchetypeFound getArchetype(String name);
 }

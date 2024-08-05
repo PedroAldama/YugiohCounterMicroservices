@@ -2,12 +2,14 @@ package com.yugimicroservice.cartas_microservice.services;
 
 
 import com.yugimicroservice.cartas_microservice.entities.Archetype;
+import com.yugimicroservice.cartas_microservice.entities.dto.ArchetypeFoundResponse;
+import com.yugimicroservice.cartas_microservice.entities.dto.ArchetypeResponse;
 
 import java.util.List;
 
 public interface ArchetypeService {
-    Archetype findByName(String name);
+    ArchetypeResponse findByName(String name);
     void save(Archetype archetype);
     List<Archetype> findAll();
-    Boolean findIfExistByName(String name);
+    ArchetypeFoundResponse findIfExistByName(String name);
 }

@@ -1,6 +1,8 @@
 package com.yugimicroservice.cartas_microservice.controllers;
 
 import com.yugimicroservice.cartas_microservice.entities.Archetype;
+import com.yugimicroservice.cartas_microservice.entities.dto.ArchetypeFoundResponse;
+import com.yugimicroservice.cartas_microservice.entities.dto.ArchetypeResponse;
 import com.yugimicroservice.cartas_microservice.services.ArchetypeService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -20,7 +22,7 @@ public class ArchetypeController {
     }
 
     @GetMapping("/{name}")
-    public Archetype get(@PathVariable String name) {
+    public ArchetypeResponse get(@PathVariable String name) {
         return archetypeService.findByName(name);
     }
 
@@ -30,9 +32,8 @@ public class ArchetypeController {
         return ResponseEntity.ok().build();
     }
     @GetMapping("/findIfExist/{name}")
-    public Boolean findIdExist(@PathVariable String name) {
-        Boolean found = archetypeService.findIfExistByName(name);
-        System.out.println(found);
-        return found;
+    public ArchetypeFoundResponse findIdExist(@PathVariable String name) {
+        return archetypeService.findIfExistByName(name);
     }
+
 }
