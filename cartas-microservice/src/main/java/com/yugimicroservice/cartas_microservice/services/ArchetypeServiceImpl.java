@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @AllArgsConstructor
@@ -26,5 +27,11 @@ public class ArchetypeServiceImpl implements ArchetypeService{
     @Override
     public List<Archetype> findAll() {
         return archetypeRepository.findAll();
+    }
+
+    @Override
+    public Boolean findIfExistByName(String name) {
+        Optional<Archetype> optional = archetypeRepository.findByName(name);
+        return optional.isPresent();
     }
 }

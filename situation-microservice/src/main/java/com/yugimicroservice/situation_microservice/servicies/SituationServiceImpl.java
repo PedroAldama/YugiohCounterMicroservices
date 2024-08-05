@@ -43,7 +43,7 @@ public class SituationServiceImpl implements SituationService {
     @Override
     public String createSituation(SituationRequest situationRequest) {
         Boolean response = restTemplate.getForObject(
-                basePath+"archetype/findByName/"+situationRequest.getName()
+                basePath+"archetype/findIfExistByName/"+situationRequest.getName()
                 , Boolean.class);
 
         if (Boolean.FALSE.equals(response)) {

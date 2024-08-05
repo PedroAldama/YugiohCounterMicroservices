@@ -9,4 +9,5 @@ public interface ArchetypeService {
     Archetype findByName(String name);
     void save(Archetype archetype);
     List<Archetype> findAll();
+    Boolean findIfExistByName(String name);
 }

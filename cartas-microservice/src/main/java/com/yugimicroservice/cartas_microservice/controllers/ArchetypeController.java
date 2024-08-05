@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/v1/archetype")
+@RequestMapping("/api/v1/carta/archetype")
 @AllArgsConstructor
 public class ArchetypeController {
     private final ArchetypeService archetypeService;
@@ -28,5 +28,11 @@ public class ArchetypeController {
     public ResponseEntity<?> create(@RequestBody Archetype archetype) {
         archetypeService.save(archetype);
         return ResponseEntity.ok().build();
+    }
+    @GetMapping("/findIfExist/{name}")
+    public Boolean findIdExist(@PathVariable String name) {
+        Boolean found = archetypeService.findIfExistByName(name);
+        System.out.println(found);
+        return found;
     }
 }

@@ -33,7 +33,7 @@ public class CartaController {
         return ResponseEntity.ok().build();
     }
 
-    @GetMapping("/archetype/{name}")
+    @GetMapping("/archetypeName/{name}")
     public ResponseEntity<?> findByArchetype(@PathVariable String name) {
         List<Carta> carta = cartaService.findByArchetype(name);
         return ResponseEntity.ok(carta);
