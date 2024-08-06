@@ -6,6 +6,7 @@ import com.yugimicroservice.cartas_microservice.entities.dto.ArchetypeResponse;
 import com.yugimicroservice.cartas_microservice.repositories.ArchetypeRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -25,9 +26,11 @@ public class ArchetypeServiceImpl implements ArchetypeService{
                 .build();
     }
 
+    @Transactional
     @Override
-    public void save(Archetype archetype) {
+    public ArchetypeResponse save(Archetype archetype) {
         archetypeRepository.save(archetype);
+        return ArchetypeResponse.builder().id(archetype.getId()).name(archetype.getName()).build();
     }
 
     @Override

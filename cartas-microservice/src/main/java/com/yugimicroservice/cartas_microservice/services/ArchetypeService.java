@@ -9,7 +9,7 @@ import java.util.List;
 
 public interface ArchetypeService {
     ArchetypeResponse findByName(String name);
-    void save(Archetype archetype);
+    ArchetypeResponse save(Archetype archetype);
     List<Archetype> findAll();
     ArchetypeFoundResponse findIfExistByName(String name);
 }

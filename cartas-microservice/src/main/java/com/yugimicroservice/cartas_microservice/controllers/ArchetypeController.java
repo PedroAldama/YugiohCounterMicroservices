@@ -28,8 +28,7 @@ public class ArchetypeController {
 
     @PostMapping
     public ResponseEntity<?> create(@RequestBody Archetype archetype) {
-        archetypeService.save(archetype);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(archetypeService.save(archetype));
     }
     @GetMapping("/findIfExist/{name}")
     public ArchetypeFoundResponse findIdExist(@PathVariable String name) {
