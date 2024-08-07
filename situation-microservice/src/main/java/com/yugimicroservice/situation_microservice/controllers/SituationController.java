@@ -4,6 +4,7 @@ import com.yugimicroservice.situation_microservice.entities.Situation;
 import com.yugimicroservice.situation_microservice.entities.dto.ArchetypeFound;
 import com.yugimicroservice.situation_microservice.entities.dto.CartaRequest;
 import com.yugimicroservice.situation_microservice.entities.dto.SituationRequest;
+import com.yugimicroservice.situation_microservice.entities.dto.SituationResponse;
 import com.yugimicroservice.situation_microservice.servicies.SituationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -15,11 +16,10 @@ import java.util.List;
 @RequestMapping("/api/v1/situation")
 @RequiredArgsConstructor
 public class SituationController {
-
     private final SituationService situationService;
 
     @GetMapping("/archetype/{name}")
-    public List<Situation> getByArchetype(@PathVariable String name) {
+    public List<SituationResponse> getByArchetype(@PathVariable String name) {
         return situationService.getAllSituationsByArchetype(name);
     }
 
@@ -28,9 +28,14 @@ public class SituationController {
         return ResponseEntity.ok().body(situationService.createSituation(situation));
     }
 
-    @GetMapping("/{name}")
+   @GetMapping("/archetype/{name}")
     public ArchetypeFound getArchetype(@PathVariable String name){
         return situationService.getArchetype(name);
+    }
+
+    @GetMapping("/{name}")
+    public List<SituationResponse> getSituation(@PathVariable String name) {
+        return situationService.getSituationForCard(name);
     }
 
     @PostMapping("/{name}/addTarget")
@@ -44,5 +49,6 @@ public class SituationController {
         situationService.addCounterCard(name,cartaRequest);
         return ResponseEntity.ok().body("Successful add card");
     }
+
 
 }

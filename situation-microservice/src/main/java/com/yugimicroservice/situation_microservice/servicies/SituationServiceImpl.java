@@ -35,13 +35,8 @@ public class SituationServiceImpl implements SituationService {
     }
 
     @Override
-    public Situation getSituationByArchetype(String archetype) {
-        return situationRepository.findByArchetype(archetype).orElseThrow();
-    }
-
-    @Override
-    public List<Situation> getAllSituationsByArchetype(String archetype) {
-        return situationRepository.findAllByArchetype(archetype);
+    public List<SituationResponse> getAllSituationsByArchetype(String archetype) {
+        return situationRepository.findAllByArchetype(archetype).stream().map(this::toResponse).toList();
     }
 
     @Override
@@ -109,5 +104,61 @@ public class SituationServiceImpl implements SituationService {
         return restTemplate.getForObject(
                 basePath+"archetype/"+name
                 , ArchetypeFound.class);
+    }
+
+    @Override
+    public List<SituationResponse> getSituationForCard(String card) {
+        Optional<TargetCard> optionalTargetCard = targetRepository.findByCardName(card);
+        return optionalTargetCard.map(targetCard -> situationRepository.findByTargetCard(targetCard)
+                .stream().map(newCard -> SituationResponse.builder()
+                .name(newCard.getName())
+                .description(newCard.getDescription())
+                .archetype(newCard.getArchetype())
+                .targetCards(TargetToCardResponse(newCard.getTargetCard()))
+                .counterCards(CounterToCardResponse(newCard.getCounterCard()))
+                .build()).toList()).orElseGet(ArrayList::new);
+    }
+
+    private List<CardResponse> TargetToCardResponse(List<TargetCard> situation) {
+        return situation.stream().map(card->{
+           CardResponse cardResponse = restTemplate
+                   .getForObject(basePath+card.getCardName(),CardResponse.class);
+            if(cardResponse.getCode().isEmpty()){
+                return CardResponse.builder().build();
+            }
+          return CardResponse.builder().code(cardResponse.getCode())
+                   .name(cardResponse.getName())
+                   .description(cardResponse.getDescription())
+                   .image(cardResponse.getImage())
+                   .type(cardResponse.getType())
+                   .build();
+        }).toList();
+
+    }
+    private List<CardResponse> CounterToCardResponse(List<CounterCard> counter) {
+        return counter.stream().map(card->{
+           CardResponse cardResponse = restTemplate
+                   .getForObject(basePath+card.getCardName(),CardResponse.class);
+
+           if(cardResponse.getCode().isEmpty()){
+               return CardResponse.builder().build();
+           }
+          return CardResponse.builder()
+                   .code(cardResponse.getCode())
+                   .name(cardResponse.getName())
+                   .description(cardResponse.getDescription())
+                   .image(cardResponse.getImage())
+                   .type(cardResponse.getType())
+                   .build();
+        }).toList();
+    }
+    private SituationResponse toResponse(Situation situation){
+        return SituationResponse.builder()
+                .name(situation.getName())
+                .description(situation.getDescription())
+                .archetype(situation.getArchetype())
+                .targetCards(TargetToCardResponse(situation.getTargetCard()))
+                .counterCards(CounterToCardResponse(situation.getCounterCard()))
+                .build();
     }
 }
