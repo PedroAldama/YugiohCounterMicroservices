@@ -34,5 +34,14 @@ public class ArchetypeController {
     public ArchetypeFoundResponse findIdExist(@PathVariable String name) {
         return archetypeService.findIfExistByName(name);
     }
+    @GetMapping("/findIfExist/id/{id}")
+    public ArchetypeFoundResponse findIdExistById(@PathVariable Long id) {
+        return archetypeService.findIfExistById(id);
+    }
+
+    @GetMapping("/id/{id}")
+    public ArchetypeResponse findById(@PathVariable Long id) {
+        return archetypeService.findById(id);
+    }
 
 }

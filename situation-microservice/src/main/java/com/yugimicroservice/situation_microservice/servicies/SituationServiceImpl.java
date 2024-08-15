@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import javax.swing.text.html.Option;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -32,6 +33,15 @@ public class SituationServiceImpl implements SituationService {
     @Override
     public void save(Situation situation) {
         situationRepository.save(situation);
+    }
+
+    @Override
+    public SituationResponse getById(Long id) {
+        Optional<Situation> optionalSituation = situationRepository.findById(id);
+        if(optionalSituation.isEmpty()) {
+            return  SituationResponse.builder().build();
+        }
+        return toResponse(optionalSituation.get());
     }
 
     @Override
@@ -110,13 +120,19 @@ public class SituationServiceImpl implements SituationService {
     public List<SituationResponse> getSituationForCard(String card) {
         Optional<TargetCard> optionalTargetCard = targetRepository.findByCardName(card);
         return optionalTargetCard.map(targetCard -> situationRepository.findByTargetCard(targetCard)
-                .stream().map(newCard -> SituationResponse.builder()
+                .stream().map(newCard -> SituationResponse.builder().id(newCard.getId())
                 .name(newCard.getName())
                 .description(newCard.getDescription())
                 .archetype(newCard.getArchetype())
                 .targetCards(TargetToCardResponse(newCard.getTargetCard()))
                 .counterCards(CounterToCardResponse(newCard.getCounterCard()))
                 .build()).toList()).orElseGet(ArrayList::new);
+    }
+
+    @Override
+    public SituationFound getIfExists(Long id) {
+        Optional<Situation> optionalSituation = situationRepository.findById(id);
+       return SituationFound.builder().found(optionalSituation.isPresent()).build();
     }
 
     private List<CardResponse> TargetToCardResponse(List<TargetCard> situation) {
@@ -154,6 +170,7 @@ public class SituationServiceImpl implements SituationService {
     }
     private SituationResponse toResponse(Situation situation){
         return SituationResponse.builder()
+                .id(situation.getId())
                 .name(situation.getName())
                 .description(situation.getDescription())
                 .archetype(situation.getArchetype())

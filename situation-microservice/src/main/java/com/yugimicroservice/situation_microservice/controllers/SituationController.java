@@ -1,10 +1,7 @@
 package com.yugimicroservice.situation_microservice.controllers;
 
 import com.yugimicroservice.situation_microservice.entities.Situation;
-import com.yugimicroservice.situation_microservice.entities.dto.ArchetypeFound;
-import com.yugimicroservice.situation_microservice.entities.dto.CartaRequest;
-import com.yugimicroservice.situation_microservice.entities.dto.SituationRequest;
-import com.yugimicroservice.situation_microservice.entities.dto.SituationResponse;
+import com.yugimicroservice.situation_microservice.entities.dto.*;
 import com.yugimicroservice.situation_microservice.servicies.SituationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -18,9 +15,14 @@ import java.util.List;
 public class SituationController {
     private final SituationService situationService;
 
-    @GetMapping("/archetype/{name}")
+    @GetMapping("/list-archetype/{name}")
     public List<SituationResponse> getByArchetype(@PathVariable String name) {
         return situationService.getAllSituationsByArchetype(name);
+    }
+
+    @GetMapping("/id/{id}")
+    public SituationResponse getById(@PathVariable Long id) {
+        return situationService.getById(id);
     }
 
     @PostMapping
@@ -48,6 +50,11 @@ public class SituationController {
     public ResponseEntity<?> addCounter(@PathVariable String name, @RequestBody CartaRequest cartaRequest ){
         situationService.addCounterCard(name,cartaRequest);
         return ResponseEntity.ok().body("Successful add card");
+    }
+
+    @GetMapping("/exist/{id}")
+    public SituationFound getIfExist(@PathVariable Long id){
+        return situationService.getIfExists(id);
     }
 
 

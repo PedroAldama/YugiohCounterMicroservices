@@ -26,6 +26,15 @@ public class ArchetypeServiceImpl implements ArchetypeService{
                 .build();
     }
 
+    @Override
+    public ArchetypeResponse findById(Long id) {
+        Archetype archetype = archetypeRepository.findById(id).orElseThrow();
+        return ArchetypeResponse.builder()
+                .id(archetype.getId())
+                .name(archetype.getName())
+                .build();
+    }
+
     @Transactional
     @Override
     public ArchetypeResponse save(Archetype archetype) {
@@ -41,6 +50,14 @@ public class ArchetypeServiceImpl implements ArchetypeService{
     @Override
     public ArchetypeFoundResponse findIfExistByName(String name) {
         Optional<Archetype> optional = archetypeRepository.findByName(name);
+        return ArchetypeFoundResponse.builder()
+                .found(optional.isPresent())
+                .build();
+    }
+
+    @Override
+    public ArchetypeFoundResponse findIfExistById(Long id) {
+        Optional<Archetype> optional = archetypeRepository.findById(id);
         return ArchetypeFoundResponse.builder()
                 .found(optional.isPresent())
                 .build();
