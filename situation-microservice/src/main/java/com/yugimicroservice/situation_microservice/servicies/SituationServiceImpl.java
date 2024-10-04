@@ -174,7 +174,7 @@ public class SituationServiceImpl implements SituationService {
         return situation.stream().map(card->{
            CardResponse cardResponse = restTemplate
                    .getForObject(basePath+card.getCardName(),CardResponse.class);
-            if(cardResponse.getCode().isEmpty()){
+            if(cardResponse.getCode() == null){
                 return CardResponse.builder().build();
             }
           return CardResponse.builder().code(cardResponse.getCode())
@@ -191,7 +191,7 @@ public class SituationServiceImpl implements SituationService {
            CardResponse cardResponse = restTemplate
                    .getForObject(basePath+card.getCardName(),CardResponse.class);
 
-           if(cardResponse.getCode().isEmpty()){
+           if(cardResponse.getCode() == null){
                return CardResponse.builder().build();
            }
           return CardResponse.builder()
