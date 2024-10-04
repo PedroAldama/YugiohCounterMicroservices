@@ -14,3 +14,31 @@ services:
       - 5431
     command:
       - -p 5431
+
+  ms_carta:
+    container_name: ms_carta
+    image: mysql:8.0.33
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: ms_carta
+      MYSQL_USER: user
+      MYSQL_PASSWORD: sasa123
+      MYSQL_ROOT_PASSWORD: sasa123
+    ports:
+      - 3307:3306
+    expose:
+      - 3307
+
+  ms_strategy:
+    container_name: ms_strategy
+    image: mysql:8.0.33
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: ms_strategy
+      MYSQL_USER: user
+      MYSQL_PASSWORD: sasa123
+      MYSQL_ROOT_PASSWORD: sasa123
+    ports:
+      - 3308:3306
+    expose:
+      - 3308

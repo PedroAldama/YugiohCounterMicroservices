@@ -1,10 +1,12 @@
 package com.yugimicroservice.cartas_microservice.entities;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.*;
 import lombok.*;
 
 import java.util.ArrayList;
 import java.util.List;
+
 
 @Entity
 @Table(name = "cards")
@@ -16,10 +18,22 @@ public class Carta {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Size(min=10)
+    @NotNull
     private String code;
+
+    @NotNull
     private String name;
+
+    @NotNull
+    @Size(min=15)
     private String description;
+
+
     private String image;
+
+    @NotNull
     private String type;
 
     @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)

@@ -10,8 +10,8 @@ public interface SituationService {
     SituationResponse getById(Long id);
     List<SituationResponse> getAllSituationsByArchetype(String archetype);
     String createSituation(SituationRequest situationRequest);
-    void addTargetCard(String name, CartaRequest target);
-    void addCounterCard(String name, CartaRequest counter);
+    String addTargetCard(String name, RequestCardName cardName);
+    String addCounterCard(String name, RequestCardName cardRequest);
     ArchetypeFound getArchetype(String name);
     List<SituationResponse> getSituationForCard(String card);
     SituationFound getIfExists(Long id);

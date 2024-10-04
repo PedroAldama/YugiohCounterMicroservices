@@ -13,11 +13,12 @@ import java.util.List;
 @RestController
 @RequestMapping("api/v1/strategy")
 @RequiredArgsConstructor
+@CrossOrigin(origins = "*")
 public class StrategyControllers {
 
     private final StrategyService strategyService;
 
-    @GetMapping
+    @GetMapping("/list")
     public List<StrategyResponse> getAll() {
         return strategyService.getAllStrategies();
     }

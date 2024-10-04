@@ -15,6 +15,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/v1/carta")
 @AllArgsConstructor
+@CrossOrigin(origins = "*")
 public class CartaController {
 
     private final CartaService cartaService;
@@ -30,9 +31,8 @@ public class CartaController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<?> create(@RequestBody CartaRequest carta) {
-        cartaService.save(carta);
-        return ResponseEntity.ok().build();
+    public ResponseEntity<?> create(@RequestBody String name) {
+        return ResponseEntity.ok(cartaService.addCard(name));
     }
 
     @GetMapping("/archetypeName/{name}")
@@ -50,4 +50,11 @@ public class CartaController {
     public ResponseEntity<?> setArchetype(@RequestBody CartaArchetype request) {
         return ResponseEntity.ok(cartaService.addArchetype(request));
     }
+
+    @DeleteMapping("/deleteArchetype")
+    public ResponseEntity<?> removeArchetype(@RequestBody CartaArchetype request) {
+        return ResponseEntity.ok(cartaService.removeArchetype(request));
+    }
+
+
 }

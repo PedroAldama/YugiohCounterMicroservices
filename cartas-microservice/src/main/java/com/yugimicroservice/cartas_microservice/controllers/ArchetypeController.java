@@ -13,6 +13,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/v1/carta/archetype")
 @AllArgsConstructor
+@CrossOrigin(origins = "*")
 public class ArchetypeController {
     private final ArchetypeService archetypeService;
 
@@ -26,10 +27,6 @@ public class ArchetypeController {
         return archetypeService.findByName(name);
     }
 
-    @PostMapping
-    public ResponseEntity<?> create(@RequestBody Archetype archetype) {
-        return ResponseEntity.ok(archetypeService.save(archetype));
-    }
     @GetMapping("/findIfExist/{name}")
     public ArchetypeFoundResponse findIdExist(@PathVariable String name) {
         return archetypeService.findIfExistByName(name);
@@ -43,5 +40,11 @@ public class ArchetypeController {
     public ArchetypeResponse findById(@PathVariable Long id) {
         return archetypeService.findById(id);
     }
+
+    @PostMapping
+    public ResponseEntity<?> create(@RequestBody Archetype archetype) {
+        return ResponseEntity.ok(archetypeService.save(archetype));
+    }
+
 
 }
