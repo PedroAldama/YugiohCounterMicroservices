@@ -9,14 +9,11 @@ import com.yugimicroservice.situation_microservice.repositories.SituationReposit
 import com.yugimicroservice.situation_microservice.repositories.TargetRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import javax.swing.text.html.Option;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -71,41 +68,79 @@ public class SituationServiceImpl implements SituationService {
     }
 
     @Override
-    public void addTargetCard(String name, CartaRequest target) {
+    public String addTargetCard(String name, RequestCardName cardName) {
         Optional<Situation> optionalSituation = situationRepository.findByName(name);
+        boolean contains = false;
+
         if(optionalSituation.isEmpty()){
-            return;
+            return "Situation not found";
         }
         Situation situation = optionalSituation.orElseThrow();
+
         List<TargetCard> cardList = new ArrayList<>();
         if(!situation.getTargetCard().isEmpty()){
             cardList = situation.getTargetCard();
+            contains = cardList.stream().anyMatch(value -> value.getCardName().equals(cardName.getCardName()));
         }
-        TargetCard targetCard = TargetCard.builder()
-                .cardName(target.getCardName()).cardCode(target.getCardCode()).build();
-        targetRepository.save(targetCard);
-        cardList.add(targetCard);
+        if(contains){
+            return "This situation already includes this card";
+        }
+        CardResponse response = card(cardName);
+        if(response.getName() != null){
+            TargetCard targetCard = TargetCard.builder()
+                    .cardName(Objects.requireNonNull(response).getName()).cardCode(Objects.requireNonNull(response).getCode()).build();
+            targetRepository.save(targetCard);
+            cardList.add(targetCard);
+        }
+
         situation.setTargetCard(cardList);
         save(situation);
+        return "Target card was added";
     }
 
     @Override
-    public void addCounterCard(String name, CartaRequest counter) {
+    public String addCounterCard(String name, RequestCardName cardName) {
         Optional<Situation> optionalSituation = situationRepository.findByName(name);
+        boolean contains = false;
         if(optionalSituation.isEmpty()){
-            return;
+            return "Situation not found";
         }
         Situation situation = optionalSituation.orElseThrow();
         List<CounterCard> cardList = new ArrayList<>();
         if(!situation.getCounterCard().isEmpty()){
             cardList = situation.getCounterCard();
+            contains = cardList.stream().anyMatch(value -> value.getCardName().equals(cardName.getCardName()));
         }
-        CounterCard counterCard = CounterCard.builder()
-                .cardName(counter.getCardName()).cardCode(counter.getCardCode()).build();
-        counterRepository.save(counterCard);
-        cardList.add(counterCard);
+        if(contains){
+            return "This situation  already includes this card";
+        }
+        CardResponse response = card(cardName);
+        if(response.getName() != null){
+            CounterCard counterCard = CounterCard.builder()
+                    .cardName(Objects.requireNonNull(response).getName()).cardCode(Objects.requireNonNull(response).getCode()).build();
+            counterRepository.save(counterCard);
+            cardList.add(counterCard);
+        }
+
         situation.setCounterCard(cardList);
         save(situation);
+        return "Counter card was added";
+    }
+
+    private CardResponse card(RequestCardName cardName) {
+        CardResponse response = restTemplate.getForObject(
+                basePath+cardName.getCardName()
+                , CardResponse.class);
+
+        if(response.getName() == null){
+            ResponseEntity<String> responsePost = searchForCard(cardName);
+            if(Objects.equals(responsePost.getBody(), cardName.getCardName())){
+                response = restTemplate.getForObject(
+                        basePath + cardName.getCardName()
+                        , CardResponse.class);
+            }
+        }
+        return response;
     }
 
     @Override
@@ -177,5 +212,18 @@ public class SituationServiceImpl implements SituationService {
                 .targetCards(TargetToCardResponse(situation.getTargetCard()))
                 .counterCards(CounterToCardResponse(situation.getCounterCard()))
                 .build();
+    }
+    private ResponseEntity<String> searchForCard(RequestCardName cardName){
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON);
+
+            HttpEntity<String> requestEntity = new HttpEntity<>(cardName.getCardName(), headers);
+
+            return restTemplate.exchange(
+                    basePath+"create",
+                    HttpMethod.POST,
+                    requestEntity,
+                    String.class
+            );
     }
 }

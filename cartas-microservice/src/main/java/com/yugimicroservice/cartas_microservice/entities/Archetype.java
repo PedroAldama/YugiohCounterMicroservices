@@ -3,6 +3,8 @@ package com.yugimicroservice.cartas_microservice.entities;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.yugimicroservice.cartas_microservice.services.ArchetypeService;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.*;
 
 import java.util.ArrayList;
@@ -17,6 +19,9 @@ public class Archetype {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @NotNull
+    @Size(min = 2, max = 20)
     private String name;
 
     @ManyToMany(mappedBy = "archetypes")

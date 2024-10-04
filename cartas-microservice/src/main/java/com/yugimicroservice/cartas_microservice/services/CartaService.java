@@ -17,4 +17,6 @@ public interface CartaService{
      CardFoundResponse cardFound(String name, String code);
      void save(CartaRequest carta);
      String addArchetype(CartaArchetype cartaArchetype);
+     String addCard(String name);
+     String removeArchetype(CartaArchetype cartaArchetype);
 }

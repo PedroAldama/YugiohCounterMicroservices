@@ -4,6 +4,7 @@ import com.yugimicroservice.situation_microservice.entities.Situation;
 import com.yugimicroservice.situation_microservice.entities.dto.*;
 import com.yugimicroservice.situation_microservice.servicies.SituationService;
 import lombok.RequiredArgsConstructor;
+import org.apache.coyote.Request;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -12,8 +13,10 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/v1/situation")
 @RequiredArgsConstructor
+@CrossOrigin(origins = "*")
 public class SituationController {
     private final SituationService situationService;
+
 
     @GetMapping("/list-archetype/{name}")
     public List<SituationResponse> getByArchetype(@PathVariable String name) {
@@ -30,7 +33,7 @@ public class SituationController {
         return ResponseEntity.ok().body(situationService.createSituation(situation));
     }
 
-   @GetMapping("/archetype/{name}")
+    @GetMapping("/archetype/{name}")
     public ArchetypeFound getArchetype(@PathVariable String name){
         return situationService.getArchetype(name);
     }
@@ -41,15 +44,13 @@ public class SituationController {
     }
 
     @PostMapping("/{name}/addTarget")
-    public ResponseEntity<?> addTarget(@PathVariable String name, @RequestBody CartaRequest cartaRequest) {
-        situationService.addTargetCard(name,cartaRequest);
-        return ResponseEntity.ok().body("Successful add card");
+    public ResponseEntity<?> addTarget(@PathVariable String name, @RequestBody RequestCardName cardName) {
+        return ResponseEntity.ok().body(situationService.addTargetCard(name,cardName));
     }
 
     @PostMapping("/{name}/addCounter")
-    public ResponseEntity<?> addCounter(@PathVariable String name, @RequestBody CartaRequest cartaRequest ){
-        situationService.addCounterCard(name,cartaRequest);
-        return ResponseEntity.ok().body("Successful add card");
+    public ResponseEntity<?> addCounter(@PathVariable String name, @RequestBody RequestCardName cartaRequest ){
+        return ResponseEntity.ok().body(situationService.addCounterCard(name,cartaRequest));
     }
 
     @GetMapping("/exist/{id}")
