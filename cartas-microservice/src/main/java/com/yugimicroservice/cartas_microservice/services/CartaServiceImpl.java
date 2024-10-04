@@ -29,10 +29,6 @@ public class CartaServiceImpl implements CartaService {
 
     private String urlTest = "https://db.ygoprodeck.com/api/v7/cardinfo.php?name=";
 
-    @Value("${openai.api.key}")
-    private String apiKey;
-    @Value("${openai.api.url}")
-    private String apiUrl;
 
     @Transactional(readOnly = true)
     @Override
@@ -205,7 +201,7 @@ public class CartaServiceImpl implements CartaService {
                     .type(card.getType())
                     .build();
         }
-        return CardResponse.builder().build();
+        return CardResponse.builder().name("notFound").build();
     }
     private CardResponse cardToResponse(Carta card){
             return CardResponse.builder()
