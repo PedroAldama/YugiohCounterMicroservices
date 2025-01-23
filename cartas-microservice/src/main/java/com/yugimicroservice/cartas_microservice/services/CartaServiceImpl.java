@@ -9,8 +9,6 @@ import com.yugimicroservice.cartas_microservice.entities.dto.*;
 import com.yugimicroservice.cartas_microservice.repositories.ArchetypeRepository;
 import com.yugimicroservice.cartas_microservice.repositories.CartaRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
@@ -27,7 +25,7 @@ public class CartaServiceImpl implements CartaService {
     private final ArchetypeRepository archetypeRepository;
     private final RestTemplate restTemplate;
 
-    private String urlTest = "https://db.ygoprodeck.com/api/v7/cardinfo.php?name=";
+    private static final  String  URL_TEST = "https://db.ygoprodeck.com/api/v7/cardinfo.php?name=";
 
 
     @Transactional(readOnly = true)
@@ -80,31 +78,8 @@ public class CartaServiceImpl implements CartaService {
         return CardFoundResponse.builder().found(Boolean.TRUE).build();
     }
 
+    @Override
     @Transactional
-    @Override
-    public void save(CartaRequest carta) {
-        Carta newCarta = Carta.builder()
-                        .name(carta.getName())
-                        .code(carta.getCode())
-                        .image(carta.getImage())
-                        .description(carta.getDescription())
-                        .type(carta.getType())
-                        .build();
-        List<Archetype> archetypes = new ArrayList<>();
-        Optional<Archetype> OptionalArchetype = archetypeRepository.findByName(carta.getArchetype());
-
-        if(OptionalArchetype.isPresent()){
-            archetypes.add(OptionalArchetype.get());
-        }else{
-            Archetype newArchetype = Archetype.builder().name(carta.getArchetype()).build();
-            archetypeRepository.save(newArchetype);
-            archetypes.add(newArchetype);
-        }
-        newCarta.setArchetypes(archetypes);
-        cartaRepository.save(newCarta);
-    }
-
-    @Override
     public String addArchetype(CartaArchetype cartaArchetype) {
         Optional<Carta> optionalCarta = cartaRepository.findByName(cartaArchetype.getName());
         Optional<Archetype> optionalArchetype = archetypeRepository.findByName(cartaArchetype.getArchetype());
@@ -126,12 +101,12 @@ public class CartaServiceImpl implements CartaService {
     @Override
     @Transactional
     public String addCard(String cardName){
-        CardResponse cardResponse = findByName(cardName);
+        CardResponse cardResponse = optionalToResponse(cartaRepository.findByName(cardName));
         if(cardResponse.getName() != null){
             return cardResponse.getName();
         }
         try {
-            String response = restTemplate.getForObject(urlTest + cardName, String.class);
+            String response = restTemplate.getForObject(URL_TEST + cardName, String.class);
             if (response== null){
                 return "Card not found";
             }
@@ -161,7 +136,7 @@ public class CartaServiceImpl implements CartaService {
                         .type(type)
                         .image(imageUrl)
                         .archetype(archetype).build();
-                save(card);
+                cartaRepository.save(save(card));
                 return card.getName();
             }
         }
@@ -212,5 +187,25 @@ public class CartaServiceImpl implements CartaService {
                     .type(card.getType())
                     .build();
     }
+    public Carta save(CartaRequest carta) {
+        Carta newCarta = Carta.builder()
+                .name(carta.getName())
+                .code(carta.getCode())
+                .image(carta.getImage())
+                .description(carta.getDescription())
+                .type(carta.getType())
+                .build();
+        List<Archetype> archetypes = new ArrayList<>();
+        Optional<Archetype> optionalArchetype = archetypeRepository.findByName(carta.getArchetype());
 
+        if(optionalArchetype.isPresent()){
+            archetypes.add(optionalArchetype.get());
+        }else{
+            Archetype newArchetype = Archetype.builder().name(carta.getArchetype()).build();
+            archetypeRepository.save(newArchetype);
+            archetypes.add(newArchetype);
+        }
+        newCarta.setArchetypes(archetypes);
+        return newCarta;
+    }
 }
