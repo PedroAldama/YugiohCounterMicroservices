@@ -6,7 +6,7 @@
 		<groupId>com.yugimicroservice</groupId>
 		<artifactId>yugi-microservice</artifactId>
 		<version>1.0.0-SNAPSHOT</version>
-		<relativePath/> <!-- lookup parent from repository -->
+		<relativePath>../pom.xml</relativePath><!-- lookup parent from repository -->
 	</parent>
 	<artifactId>cartas-microservice</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
